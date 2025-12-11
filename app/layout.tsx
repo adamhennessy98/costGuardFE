@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
-import { cn } from "@/lib/utils";
+import { AppShell } from "@/components/layout/app-shell";
 
 import "./globals.css";
 
@@ -20,12 +20,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full">
       <body
-        className={cn(
-          "flex min-h-screen flex-col bg-background text-foreground",
-          inter.variable,
-        )}
+        className={`${inter.variable} min-h-screen bg-background text-foreground`}
       >
-        {children}
+        <AppShell>{children}</AppShell>
       </body>
     </html>
   );
