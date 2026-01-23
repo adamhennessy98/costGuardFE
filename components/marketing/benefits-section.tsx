@@ -41,7 +41,7 @@ export function BenefitsSection() {
             <p className="text-sm font-semibold uppercase tracking-wide text-indigo-600">
               Outcomes
             </p>
-            <h2 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+            <h2 className="mt-2 font-heading text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
               Features translate to real business value
             </h2>
             <p className="mt-4 text-lg text-gray-600">

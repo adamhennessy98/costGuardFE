@@ -1,10 +1,14 @@
 export function HeroSection() {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-slate-50 via-white to-white pb-24 pt-20 sm:pt-28 lg:pb-32">
-      {/* Subtle gradient accent */}
-      <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(120,119,198,0.15),transparent)]" />
+    <section className="relative overflow-hidden bg-slate-50 pb-24 pt-20 sm:pt-28 lg:pb-32">
+      {/* Gradient background */}
+      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+        <div className="absolute inset-0 bg-[radial-gradient(1200px_circle_at_50%_-10%,rgba(99,102,241,0.18),transparent_55%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(900px_circle_at_15%_30%,rgba(168,85,247,0.12),transparent_55%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(900px_circle_at_85%_40%,rgba(59,130,246,0.10),transparent_55%)]" />
+      </div>
 
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+      <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-center gap-12 lg:grid-cols-2">
           {/* Left: Copy */}
           <div className="text-center lg:text-left">
@@ -13,7 +17,7 @@ export function HeroSection() {
               Now in private beta
             </span>
 
-            <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
+            <h1 className="font-heading text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
               Catch costly satisfation{" "}
               <span className="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
                 before you pay

@@ -37,7 +37,7 @@ export function ProductValueSection() {
   return (
     <section className="py-20 bg-white">
       <div className="mx-auto max-w-4xl px-6 text-center">
-        <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+        <h2 className="font-heading text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
           Detect suspicious invoices before they cost you
         </h2>
         <p className="mt-6 text-lg leading-8 text-gray-600 max-w-2xl mx-auto">

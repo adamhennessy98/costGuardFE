@@ -33,7 +33,7 @@ export function TestimonialsSection() {
           <p className="text-sm font-semibold uppercase tracking-wide text-indigo-600">
             Testimonials
           </p>
-          <h2 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+          <h2 className="mt-2 font-heading text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
             Trusted by finance professionals
           </h2>
         </div>

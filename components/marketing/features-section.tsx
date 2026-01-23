@@ -65,14 +65,23 @@ export function FeaturesSection() {
   return (
     <section
       id="features"
-      className="bg-slate-900 py-24 sm:py-32"
+      className="relative overflow-hidden bg-slate-900 py-24 sm:py-32"
     >
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+      {/* Decorative background */}
+      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+        <div className="absolute inset-0 bg-[radial-gradient(1200px_circle_at_50%_-10%,rgba(99,102,241,0.35),transparent_55%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(900px_circle_at_15%_30%,rgba(168,85,247,0.25),transparent_55%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(900px_circle_at_85%_40%,rgba(59,130,246,0.22),transparent_55%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(148,163,184,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(148,163,184,0.08)_1px,transparent_1px)] bg-[size:48px_48px]" />
+        <div className="absolute inset-0 [mask-image:radial-gradient(ellipse_at_top,black,transparent_65%)]" />
+      </div>
+
+      <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-sm font-semibold uppercase tracking-wide text-indigo-400">
             Capabilities
           </p>
-          <h2 className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">
+          <h2 className="mt-2 font-heading text-3xl font-bold tracking-tight text-white sm:text-4xl">
             Powerful invoice intelligence
           </h2>
           <p className="mt-4 text-lg text-slate-300">

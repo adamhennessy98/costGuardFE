@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { CostGuardLogo } from "@/components/ui/cost-guard-logo";
 
 const navLinks = [
   { name: "Features", href: "#features" },
@@ -20,10 +21,10 @@ export function MarketingHeader() {
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link
           href="/"
-          className="text-lg font-bold tracking-tight text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded"
-          aria-label="costGuard - Home"
+          className="focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded"
+          aria-label="CostGuard - Home"
         >
-          costGuard
+          <CostGuardLogo className="h-8 w-auto" />
         </Link>
 
         {/* Desktop navigation */}
