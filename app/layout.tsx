@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
-import { AppShell } from "@/components/layout/app-shell";
-
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
+const inter = Inter({ subsets: ["latin"], variable: "--font-heading" });
 
 export const metadata: Metadata = {
   title: "costGuard",
@@ -18,11 +16,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full">
-      <body
-        className={`${inter.variable} min-h-screen bg-background text-foreground`}
-      >
-        <AppShell>{children}</AppShell>
+    <html lang="en" className={`${inter.variable} h-full scroll-smooth`} suppressHydrationWarning>
+      <body className="min-h-screen bg-background font-sans text-foreground">
+        {children}
       </body>
     </html>
   );
