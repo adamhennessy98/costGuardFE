@@ -1,77 +1,99 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { FlaggedInvoicesTable, type FlaggedInvoice } from "@/components/tables/flagged-invoices-table";
+import { FlaggedInvoicesTable } from "@/components/tables/flagged-invoices-table";
 import { Button } from "@/components/ui/button";
+import { ErrorState } from "@/components/ui/error";
+import { LoadingState } from "@/components/ui/loading";
+import {
+  getFlaggedInvoices,
+  type InvoiceWithAnomalies,
+  AnomalyStatus,
+  AnomalyType,
+  ApiError,
+} from "@/lib/api";
 
-const MOCK_INVOICES: FlaggedInvoice[] = [
-  {
-    id: "inv-2024-001",
-    vendor: "Acme Cloud",
-    date: "Nov 05, 2025",
-    amount: "$12,480.00",
-    anomalyType: "Cost spike",
-    severity: "high",
-    status: "open",
-  },
-  {
-    id: "inv-2024-002",
-    vendor: "DataStream Labs",
-    date: "Nov 06, 2025",
-    amount: "$3,210.45",
-    anomalyType: "New service",
-    severity: "medium",
-    status: "in_review",
-  },
-  {
-    id: "inv-2024-003",
-    vendor: "Brightline Analytics",
-    date: "Nov 01, 2025",
-    amount: "$8,760.00",
-    anomalyType: "Currency mismatch",
-    severity: "low",
-    status: "resolved",
-  },
-  {
-    id: "inv-2024-004",
-    vendor: "Lambda Ops",
-    date: "Nov 07, 2025",
-    amount: "$5,890.22",
-    anomalyType: "Usage surge",
-    severity: "medium",
-    status: "open",
-  },
-];
+// TODO: Replace with actual user ID from auth context
+const TEMP_USER_ID = "00000000-0000-0000-0000-000000000001";
 
 export default function FlaggedInvoicesPage() {
+  const [invoices, setInvoices] = useState<InvoiceWithAnomalies[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<ApiError | null>(null);
+
   const [vendorQuery, setVendorQuery] = useState("");
   const [anomalyFilter, setAnomalyFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
+  const fetchInvoices = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      // Map frontend status filter to backend AnomalyStatus
+      let apiStatus: AnomalyStatus | undefined;
+      if (statusFilter === "unreviewed") {
+        apiStatus = AnomalyStatus.UNREVIEWED;
+      } else if (statusFilter === "valid") {
+        apiStatus = AnomalyStatus.VALID;
+      } else if (statusFilter === "issue") {
+        apiStatus = AnomalyStatus.ISSUE;
+      }
+
+      const data = await getFlaggedInvoices(TEMP_USER_ID, {
+        status: apiStatus,
+        limit: 100,
+      });
+      setInvoices(data);
+    } catch (err) {
+      if (err instanceof ApiError) {
+        setError(err);
+      } else {
+        setError(new ApiError(0, "Unknown Error", err instanceof Error ? err.message : "Failed to load invoices"));
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }, [statusFilter]);
+
+  useEffect(() => {
+    fetchInvoices();
+  }, [fetchInvoices]);
+
   const filteredInvoices = useMemo(() => {
-    return MOCK_INVOICES.filter((invoice) => {
-      const matchesVendor = vendorQuery
-        ? invoice.vendor.toLowerCase().includes(vendorQuery.toLowerCase())
-        : true;
-      const matchesAnomaly = anomalyFilter === "all" ? true : invoice.anomalyType === anomalyFilter;
-      const matchesStatus = statusFilter === "all" ? true : invoice.status === statusFilter;
-      return matchesVendor && matchesAnomaly && matchesStatus;
+    return invoices.filter((invoice) => {
+      // Vendor search - we don't have vendor name in the response, so skip for now
+      // TODO: Join vendor data or add vendor_name to InvoiceWithAnomalies response
+
+      // Anomaly type filter
+      if (anomalyFilter !== "all") {
+        const hasMatchingAnomaly = invoice.anomalies.some(
+          (a) => a.type === anomalyFilter
+        );
+        if (!hasMatchingAnomaly) return false;
+      }
+
+      return true;
     });
-  }, [anomalyFilter, statusFilter, vendorQuery]);
+  }, [invoices, anomalyFilter]);
 
   const anomalyOptions = useMemo(() => {
-    const values = new Set<string>(MOCK_INVOICES.map((invoice) => invoice.anomalyType));
-    return Array.from(values).sort();
+    return Object.values(AnomalyType);
   }, []);
+
+  const resetFilters = () => {
+    setVendorQuery("");
+    setAnomalyFilter("all");
+    setStatusFilter("all");
+  };
 
   return (
     <section className="space-y-8">
       <header className="space-y-2">
         <h1 className="text-2xl font-semibold tracking-tight">Flagged invoices</h1>
         <p className="text-sm text-foreground/70">
-          Review anomalies surfaced by automated checks. Replace this mock data with your backend feed
-          when ready.
+          Review anomalies surfaced by automated checks.
         </p>
       </header>
 
@@ -87,7 +109,9 @@ export default function FlaggedInvoicesPage() {
               value={vendorQuery}
               onChange={(event) => setVendorQuery(event.target.value)}
               placeholder="e.g. Acme"
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/20"
+              disabled
+              title="Vendor search coming soon"
+              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/20 disabled:opacity-50"
             />
           </div>
           <div className="flex flex-1 flex-col gap-1">
@@ -103,7 +127,7 @@ export default function FlaggedInvoicesPage() {
               <option value="all">All</option>
               {anomalyOptions.map((option) => (
                 <option key={option} value={option}>
-                  {option}
+                  {option.replace(/_/g, " ")}
                 </option>
               ))}
             </select>
@@ -119,9 +143,9 @@ export default function FlaggedInvoicesPage() {
               className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/20"
             >
               <option value="all">All</option>
-              <option value="open">Open</option>
-              <option value="in_review">In review</option>
-              <option value="resolved">Resolved</option>
+              <option value="unreviewed">Unreviewed</option>
+              <option value="valid">Valid</option>
+              <option value="issue">Issue</option>
             </select>
           </div>
         </div>
@@ -129,17 +153,23 @@ export default function FlaggedInvoicesPage() {
           type="button"
           variant="ghost"
           className="self-start text-xs sm:self-auto"
-          onClick={() => {
-            setVendorQuery("");
-            setAnomalyFilter("all");
-            setStatusFilter("all");
-          }}
+          onClick={resetFilters}
         >
           Reset filters
         </Button>
       </div>
 
-      <FlaggedInvoicesTable invoices={filteredInvoices} />
+      {error ? (
+        <ErrorState
+          title="Error loading invoices"
+          error={error}
+          onRetry={fetchInvoices}
+        />
+      ) : isLoading ? (
+        <LoadingState message="Loading invoices..." />
+      ) : (
+        <FlaggedInvoicesTable invoices={filteredInvoices} />
+      )}
     </section>
   );
 }
